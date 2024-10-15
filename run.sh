@@ -58,7 +58,7 @@ docker_cd(){
         image: vova0911/topix:${ARCH}_latest
         command: gunicorn -w 4 -b 0.0.0.0:5000 wsgi:app
         volumes:
-            - /home/($(sudo who))/script_files/topix:/root/script_files/topix
+            - /home/$(sudo who)/script_files/topix:/root/script_files/topix
     nginx:
         container_name: nginx
         restart: always
