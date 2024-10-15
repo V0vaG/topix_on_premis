@@ -67,7 +67,7 @@ docker_cd(){
             - app
         ports:
             - "85:80"
-" > ./docker-compose_d.yml
+    " > ./docker-compose_d.yml
 
     docker-compose -f ./docker-compose_d.yml up -d --build --scale app=2
 }
