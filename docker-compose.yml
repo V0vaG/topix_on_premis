@@ -1,10 +1,8 @@
-version: "3"
-
 services:
     app:
         build: ./app
         volumes:
-            - /home/vova/script_files/topix:/root/script_files/topix
+            - /home/vova/topix:/root/script_files/topix
     nginx:
         container_name: nginx
         restart: always

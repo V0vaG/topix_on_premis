@@ -1,5 +1,12 @@
 #!/bin/bash
-install_docker_and_compose(){
+
+ARCH=$(dpkg --print-architecture)
+VERSION='1.0.0'
+
+echo "arch: $ARCH"
+echo "version: $VERSION "
+
+docker_install(){
     # Add Docker's official GPG key:
     sudo apt-get update
     sudo apt-get install ca-certificates curl
@@ -21,25 +28,34 @@ install_docker_and_compose(){
     sudo systemctl restart docker
 }
 
-sudo rm /home/ubuntu/run.sh
-sudo rm /home/ubuntu/admin.conf
-sudo rm /home/ubuntu/solitare.yaml
+docker_build(){
+    docker build --build-arg VERSION=$VERSION  -t vova0911/topix:${ARCH}_latest ./app
+    docker tag vova0911/topix:${ARCH}_latest vova0911/topix:${ARCH}_${VERSION}
+}
 
-sudo rm /home/ubuntu/docker-compose.yml
-cd /home/ubuntu && docker-compose down
+docker_push(){
+    echo "Logging into Docker Hub..."
+    read -p "Enter dockerhub user: " DOCKER_USERNAME
+    read -p "Enter dockerhub pass: " DOCKER_PASSWORD
+    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    if [ $? -ne 0 ]; then
+        echo "Docker login failed. Exiting..."
+        exit 1
+    fi
+    docker push vova0911/topix:${ARCH}_${VERSION}
+    docker push vova0911/topix:${ARCH}_latest
+}
 
-sudo cat << EOF > /home/ubuntu/docker-compose.yml
-version: "3"
-
-services:
+docker_cd(){
+    docker-compose down
+    
+    echo "services:
     app:
         restart: always
-        image: vova0911/topix:ver_num
+        image: vova0911/topix:${ARCH}_latest
         command: gunicorn -w 4 -b 0.0.0.0:5000 wsgi:app
         volumes:
-            - /home/ubuntu/json/:/~/json
-            - /home/ubuntu/logs/:/~/logs
-            - /home/ubuntu/topix:/root/script_files/topix
+            - /home/$USER/topix:/root/script_files/topix
     nginx:
         container_name: nginx
         restart: always
@@ -47,11 +63,18 @@ services:
         depends_on:
             - app
         ports:
-            - "80:80"
-EOF
+            - "85:80"
+" > ./docker-compose_d.yml
 
-install_docker_and_compose 
+    docker-compose up -d --build --scale app=2
+}
 
-cd /home/ubuntu && docker-compose up -d --build --scale app=pod_num
 
-#sudo docker run vova0911/vconf:latest
+
+# docker_install 
+
+docker_build
+
+docker_push
+
+docker_cd
