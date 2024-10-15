@@ -62,7 +62,7 @@ docker_cd(){
     nginx:
         container_name: nginx
         restart: always
-        image: vova0911/nginx_images:latest
+        image: vova0911/nginx_images:${ARCH}_latest
         depends_on:
             - app
         ports:
