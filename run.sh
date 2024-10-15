@@ -73,8 +73,8 @@ docker_cd(){
 
 # docker_install 
 
-docker_build
+# docker_build
 
-docker_push
+# docker_push
 
 docker_cd
