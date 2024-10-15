@@ -48,7 +48,7 @@ docker_push(){
 
 docker_cd(){
     docker-compose down
-    
+
     echo "services:
     app:
         restart: always
@@ -66,7 +66,7 @@ docker_cd(){
             - "85:80"
 " > ./docker-compose_d.yml
 
-    docker-compose up -d --build --scale app=2
+    docker-compose -f ./docker-compose_d.yml up -d --build --scale app=2
 }
 
 
