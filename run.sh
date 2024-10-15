@@ -58,7 +58,7 @@ docker_cd(){
         image: vova0911/topix:${ARCH}_latest
         command: gunicorn -w 4 -b 0.0.0.0:5000 wsgi:app
         volumes:
-            - /home/$USER/topix:/root/script_files/topix
+            - /home/$USER/script_files/topix:/root/script_files/topix
     nginx:
         container_name: nginx
         restart: always
@@ -72,12 +72,10 @@ docker_cd(){
     docker-compose -f ./docker-compose_d.yml up -d --build --scale app=2
 }
 
-
-
 # docker_install 
 
-docker_build
+# docker_build
 
-docker_push
+# docker_push
 
 docker_cd
