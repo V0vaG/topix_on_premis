@@ -42,12 +42,14 @@ def register():
         username = request.form.get('username')
         password = request.form.get('password')
         groups = request.form.get('groups').split(',')
-        role = request.form.get('role') if 'role' in request.form else 'user'
 
         # Check if username already exists
         if any(user['username'] == username for user in users):
             flash(f"Username '{username}' already exists.", "danger")
             return redirect(url_for('register'))
+
+        # Automatically assign 'admin' if it's the first user, otherwise 'user'
+        kind = 'admin' if len(users) == 0 else 'user'
 
         # Hash the password before saving it
         hashed_password = generate_password_hash(password)
@@ -56,7 +58,7 @@ def register():
         new_user = {
             'username': username,
             'password': hashed_password,
-            'kind': role,  # Use the selected role (user/admin)
+            'kind': kind,
             'groups': groups
         }
 
@@ -65,15 +67,10 @@ def register():
         with open(users_file, 'w') as f:
             json.dump(users, f, indent=4)
 
-        flash(f"User created successfully as {role}!", "success")
+        flash(f"User created successfully as {kind}!", "success")
         return redirect(url_for('show_login'))
 
-    # Check if accessed from admin area or login page
-    show_role_selection = 'admin_area' in request.args  # Flag for role dropdown
-    back_url = url_for('admin_area') if 'admin_area' in request.args else url_for('show_login')  # Determine where to go back to
-    
-    return render_template('register.html', show_role_selection=show_role_selection, back_url=back_url)
-
+    return render_template('register.html')
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -112,17 +109,7 @@ def show_login():
     # Check if there are no users
     no_users_exist = len(users) == 0
 
-    # Load the external registration setting
-    config_file = os.path.join(DATA_DIR, 'config.json')
-    if os.path.exists(config_file):
-        with open(config_file, 'r') as f:
-            config = json.load(f)
-    else:
-        config = {"allow_registration": False}
-
-    allow_registration = config.get('allow_registration', False)
-
-    return render_template('login.html', no_users_exist=no_users_exist, allow_registration=allow_registration)
+    return render_template('login.html', no_users_exist=no_users_exist)
 
 @app.route('/logout')
 def logout():
@@ -157,7 +144,7 @@ def home():
     # Render the home page with the admin flag
     return render_template('index.html', version=version, host=host, is_admin=is_admin, user=username)
 
-@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/admin')
 @login_required
 def admin_area():
     # Ensure the logged-in user is an admin
@@ -165,64 +152,12 @@ def admin_area():
 
     with open(USERS_FILE, 'r') as f:
         users = json.load(f)
-
+    
     user = next((u for u in users if u['username'] == username), None)
     if user and user['kind'] == 'admin':
-        # Load the external registration setting
-        config_file = os.path.join(DATA_DIR, 'config.json')
-        if os.path.exists(config_file):
-            with open(config_file, 'r') as f:
-                config = json.load(f)
-        else:
-            config = {"allow_registration": False}
-
-        allow_registration = config.get('allow_registration', False)
-
-        # Count topics created by each user
-        user_topics_count = {user['username']: 0 for user in users}
-
-        for folder in os.listdir(DATA_DIR):
-            folder_path = os.path.join(DATA_DIR, folder)
-            if os.path.isdir(folder_path):
-                json_file = os.path.join(folder_path, f"{folder}.json")
-                if os.path.exists(json_file):
-                    with open(json_file, 'r') as f:
-                        topic_data = json.load(f)[0]
-                        editor = topic_data.get('editor')
-                        if editor in user_topics_count:
-                            user_topics_count[editor] += 1
-
-        # Create a list of user data with the topic counts
-        user_data = [(user, user_topics_count.get(user['username'], 0)) for user in users]
-
-        return render_template('admin.html', allow_registration=allow_registration, user_data=user_data)
+        return render_template('admin.html')
     
     flash("You do not have access to the admin area.", "danger")
-    return redirect(url_for('home'))
-
-@app.route('/toggle_registration', methods=['POST'])
-@login_required
-def toggle_registration():
-    # Ensure the logged-in user is an admin
-    username = session.get('active_user')
-
-    with open(USERS_FILE, 'r') as f:
-        users = json.load(f)
-
-    user = next((u for u in users if u['username'] == username), None)
-    if user and user['kind'] == 'admin':
-        allow_registration = 'allow_registration' in request.form
-
-        # Update the config file
-        config_file = os.path.join(DATA_DIR, 'config.json')
-        config = {'allow_registration': allow_registration}
-        with open(config_file, 'w') as f:
-            json.dump(config, f)
-
-        flash("Settings updated successfully.", "success")
-        return redirect(url_for('admin_area'))
-
-    flash("You do not have permission to perform this action.", "danger")
     return redirect(url_for('home'))
 
 @app.route('/list')
