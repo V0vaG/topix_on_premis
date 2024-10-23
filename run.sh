@@ -3,7 +3,7 @@
 source .env
 
 ARCH=$(dpkg --print-architecture)
-VERSION='1.0.0'
+VERSION='1.0.2'
 
 echo "arch: $ARCH"
 echo "version: $VERSION "
@@ -38,8 +38,8 @@ docker_build(){
 
 docker_push(){
     echo "Logging into Docker Hub..."
-    read -p "Enter dockerhub user: " DOCKER_USERNAME
-    read -p "Enter dockerhub pass: " DOCKER_PASSWORD
+#    read -p "Enter dockerhub user: " DOCKER_USERNAME
+#    read -p "Enter dockerhub pass: " DOCKER_PASSWORD
     echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     if [ $? -ne 0 ]; then
         echo "Docker login failed. Exiting..."
@@ -79,4 +79,4 @@ docker_build
 
 docker_push
 
-# docker_cd
+docker_cd
