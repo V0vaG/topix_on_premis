@@ -51,7 +51,7 @@
         .form-group-row .form-group {
             display: flex;
             flex-direction: column;
-            width: 48%;
+            width: 48%; /* Adjust the width of each input */
         }
 
         textarea {
@@ -141,11 +141,16 @@
 <body>
     <div class="container">
         <form id="edit-topic-form" action="{{ url_for('edit_topic', folder=folder, id=topic['topic_id']) }}" method="POST" style="display: flex; flex-direction: column; height: 100%;">
-            <!-- Topic Name -->
+            <!-- Topic Name and Author in the same row -->
             <div class="form-group-row">
                 <div class="form-group">
                     <label for="topic">Topic Name:</label>
                     <input type="text" id="topic" name="topic" value="{{ topic['topic'] }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="author">Author:</label>
+                    <input type="text" id="author" name="author" value="{{ topic['editor'] }}" required>
                 </div>
             </div>
 

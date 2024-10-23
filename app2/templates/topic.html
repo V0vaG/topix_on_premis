@@ -24,8 +24,8 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            width: 100vw;
-            height: 100vh;
+            width: 100vw; /* Full width of the browser */
+            height: 100vh; /* Full height of the browser */
             display: flex;
             flex-direction: column;
         }
@@ -54,8 +54,8 @@
             overflow-x: auto;
             font-family: monospace;
             font-size: 1rem;
-            flex-grow: 1; 
-            margin-bottom: 20px;
+            flex-grow: 1; /* Make the code block expand */
+            margin-bottom: 20px; /* Space between pre and buttons */
         }
 
         /* Button styling */
@@ -92,14 +92,15 @@
         .button-container {
             display: flex;
             justify-content: flex-start;
+            flex-shrink: 0; /* Ensure button container stays at the bottom */
             padding: 10px 0;
         }
 
-        /* File list */
+        /* Styling for the file list */
         ul {
             list-style-type: none;
             padding-left: 0;
-            margin: 20px 0;
+            margin: 20px 0; /* Space between the file list and other elements */
         }
 
         li {
@@ -114,7 +115,47 @@
         a.file-link:hover {
             text-decoration: underline;
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .labels-row {
+                flex-direction: column;
+                align-items: flex-start;
+                font-size: 0.9rem;
+            }
+
+            pre {
+                font-size: 0.9rem;
+            }
+
+            .button, .cancel-button {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+        }
     </style>
+
+    <!-- Highlight.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/default.min.css">
+
+    <!-- Highlight.js Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Apply syntax highlighting
+            document.querySelectorAll('pre').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -127,7 +168,7 @@
             <p><strong>Edition Date:</strong> {{ topic.edition_date }}</p>
         </div>
 
-        <!-- Preformatted text -->
+        <!-- Preformatted text without "Data" label -->
         <pre><code>{{ topic_content | safe }}</code></pre>
 
         <h3>Uploaded Files:</h3>
@@ -145,8 +186,8 @@
 
         <div class="button-container">
             <a href="{{ url_for('list_topics') }}" class="button cancel-button">Back to List</a>
-            {% if is_admin or is_author %}
-                <a href="{{ url_for('edit_topic', folder=folder, id=topic.topic_id) }}" class="button">Edit</a>
-            {% endif %}
+            <a href="{{ url_for('edit_topic', folder=folder, id=topic.topic_id) }}" class="button">Edit</a>
         </div>
-   
+    </div>
+</body>
+</html>
