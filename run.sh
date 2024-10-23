@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source .env
+
 ARCH=$(dpkg --print-architecture)
 VERSION='1.0.0'
 
@@ -73,8 +75,8 @@ docker_cd(){
 
 # docker_install 
 
-# docker_build
+docker_build
 
-# docker_push
+docker_push
 
-docker_cd
+# docker_cd
