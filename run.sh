@@ -31,7 +31,6 @@ docker_install(){
 docker_build(){
     docker build --build-arg VERSION=$VERSION  -t vova0911/topix:${ARCH}_latest ./app
     docker build  -t vova0911/nginx:${ARCH}_latest ./nginx
-    
     docker tag vova0911/topix:${ARCH}_latest vova0911/topix:${ARCH}_${VERSION}
 }
 
