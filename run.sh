@@ -6,9 +6,10 @@ git clone git@github.com:V0vaG/topi.git
 
 cp -r topi/app .
 cp -r topi/nginx .
+rm -r topi
 
 ARCH=$(dpkg --print-architecture)
-VERSION='1.0.44'
+VERSION='1.0.45'
 
 echo "arch: $ARCH"
 echo "version: $VERSION "
@@ -80,8 +81,8 @@ docker_cd(){
 
 # docker_install 
 
-# docker_build
+docker_build
 
-# docker_push
+docker_push
 
-# docker_cd
+docker_cd
