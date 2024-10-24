@@ -9,7 +9,7 @@ cp -r topi/nginx .
 rm -rf topi
 
 ARCH=$(dpkg --print-architecture)
-VERSION='1.0.45'
+VERSION='1.0.46'
 
 echo "arch: $ARCH"
 echo "version: $VERSION "
