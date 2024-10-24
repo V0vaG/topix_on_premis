@@ -6,7 +6,7 @@ git clone git@github.com:V0vaG/topi.git
 
 cp -r topi/app .
 cp -r topi/nginx .
-rm -r topi
+rm -rf topi
 
 ARCH=$(dpkg --print-architecture)
 VERSION='1.0.45'
