@@ -30,7 +30,7 @@ if not os.path.exists(USERS_FILE):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     users_file = os.path.join(DATA_DIR, 'users.json')
-
+    
     # Load existing users
     if os.path.exists(users_file):
         with open(users_file, 'r') as f:
@@ -42,12 +42,7 @@ def register():
         username = request.form.get('username')
         password = request.form.get('password')
         groups = request.form.get('groups').split(',')
-
-        # If there are no users, make the first user an admin
-        if len(users) == 0:
-            role = 'admin'
-        else:
-            role = request.form.get('role') if 'role' in request.form else 'user'
+        role = request.form.get('role') if 'role' in request.form else 'user'
 
         # Check if username already exists
         if any(user['username'] == username for user in users):
@@ -61,7 +56,7 @@ def register():
         new_user = {
             'username': username,
             'password': hashed_password,
-            'kind': role,  # Use the selected or auto-assigned role (user/admin)
+            'kind': role,  # Use the selected role (user/admin)
             'groups': groups
         }
 
